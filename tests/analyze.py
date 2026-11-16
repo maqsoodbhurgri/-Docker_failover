@@ -45,7 +45,7 @@ detection = (first_sign["t"] - kill) if first_sign else None
 # Failover: kill -> first successful BACKUP response
 first_backup = next((r for r in after_kill
                      if r["status"] == 200 and r["server"] == "BACKUP"), None)
-failover = (first_backup["t"] - kill) if first_backup else None
+failover = (first_backup["t"] + first_backup["lat"] / 1000 - kill) if first_backup else None
 
 # Downtime: first failed request after kill -> next successful response
 downtime = 0.0
