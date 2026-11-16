@@ -110,3 +110,6 @@ try:
     print(f"Chart saved            : {out}")
 except ImportError:
     print("(Optional: pip install matplotlib to also get a chart)")
+
+duration = rows[-1]["t"] - rows[0]["t"]
+print(f"Time-based availability: {100 * (1 - downtime / duration):.2f} %")
