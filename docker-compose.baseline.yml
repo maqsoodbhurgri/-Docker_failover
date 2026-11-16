@@ -1,0 +1,33 @@
+services:
+  primary:
+    build: ./backend
+    environment:
+      - SERVER_NAME=PRIMARY
+    networks:
+      baseline-net:
+        ipv4_address: 172.31.0.11
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 2s
+      timeout: 1s
+      retries: 2
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "18080:80"
+    volumes:
+      - ./nginx/nginx.baseline.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      primary:
+        condition: service_healthy
+    networks:
+      baseline-net:
+        ipv4_address: 172.31.0.10
+
+networks:
+  baseline-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.0/24
